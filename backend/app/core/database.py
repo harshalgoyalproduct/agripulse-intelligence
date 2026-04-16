@@ -3,14 +3,14 @@ from sqlalchemy.orm import declarative_base
 from typing import AsyncGenerator
 from .config import settings
 
-# Create async engine
+# Create async engine — use ASYNC_DATABASE_URL which converts postgresql:// to postgresql+asyncpg://
 engine = create_async_engine(
-    settings.DATABASE_URL,
+    settings.ASYNC_DATABASE_URL,
     echo=settings.DEBUG,
     future=True,
     pool_pre_ping=True,
-    pool_size=20,
-    max_overflow=40,
+    pool_size=5,
+    max_overflow=10,
 )
 
 # Create async session factory

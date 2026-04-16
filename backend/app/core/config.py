@@ -3,7 +3,7 @@ from typing import Optional
 
 
 class Settings(BaseSettings):
-    # Database
+    # Database — Render gives postgresql://, we need postgresql+asyncpg://
     DATABASE_URL: str = "postgresql+asyncpg://agripulse:agripulse@localhost:5432/agripulse"
 
     # External APIs
@@ -25,11 +25,22 @@ class Settings(BaseSettings):
     API_PREFIX: str = "/api/v1"
 
     # CORS
-    ALLOWED_ORIGINS: list = [
-        "http://localhost",
-        "http://localhost:3000",
-        "http://localhost:8000",
-    ]
+    CORS_ORIGINS: str = "http://localhost,http://localhost:3000,http://localhost:8000"
+
+    @property
+    def ASYNC_DATABASE_URL(self) -> str:
+        """Convert standard postgresql:// URL to asyncpg format."""
+        url = self.DATABASE_URL
+        if url.startswith("postgresql://"):
+            url = url.replace("postgresql://", "postgresql+asyncpg://", 1)
+        elif url.startswith("postgres://"):
+            url = url.replace("postgres://", "postgresql+asyncpg://", 1)
+        return url
+
+    @property
+    def ALLOWED_ORIGINS(self) -> list:
+        """Parse comma-separated CORS origins string into a list."""
+        return [origin.strip() for origin in self.CORS_ORIGINS.split(",") if origin.strip()]
 
     class Config:
         env_file = ".env"
