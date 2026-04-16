@@ -1,0 +1,48 @@
+# Render Blueprint — deploy the full AgriPulse stack
+# Push to GitHub, then: https://render.com/deploy → select this repo
+
+databases:
+  - name: agripulse-db
+    plan: free
+    databaseName: agripulse
+    user: agripulse
+    ipAllowList: []
+
+services:
+  # FastAPI Backend
+  - type: web
+    name: agripulse-api
+    runtime: python
+    plan: free
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: agripulse-db
+          property: connectionURI
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ENVIRONMENT
+        value: production
+      - key: NASA_POWER_BASE_URL
+        value: https://power.larc.nasa.gov
+      - key: OPEN_METEO_BASE_URL
+        value: https://api.open-meteo.com
+      - key: CORS_ORIGINS
+        value: https://agripulse-web.onrender.com
+
+  # Next.js Frontend
+  - type: web
+    name: agripulse-web
+    runtime: node
+    plan: free
+    rootDir: frontend
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: NEXT_PUBLIC_API_BASE_URL
+        value: https://agripulse-api.onrender.com

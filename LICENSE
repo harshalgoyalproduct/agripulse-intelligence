@@ -1,0 +1,146 @@
+MIT License
+
+Copyright (c) 2026 AgriPulse Intelligence
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+ATTRIBUTION & THIRD-PARTY LICENSES
+
+AgriPulse Intelligence is built on excellent open-source software:
+
+1. **Next.js & React**
+   - License: MIT
+   - https://github.com/vercel/next.js
+
+2. **FastAPI**
+   - License: MIT
+   - https://github.com/tiangolo/fastapi
+
+3. **PostgreSQL & TimescaleDB**
+   - PostgreSQL: PostgreSQL License
+   - TimescaleDB: Elastic License v2 / AGPL v3
+   - https://www.postgresql.org/
+   - https://github.com/timescale/timescaledb
+
+4. **Redis**
+   - License: Server Side Public License (SSPL)
+   - https://redis.io/
+
+5. **XGBoost**
+   - License: Apache License 2.0
+   - https://github.com/dmlc/xgboost
+
+6. **Scikit-learn**
+   - License: BSD 3-Clause
+   - https://github.com/scikit-learn/scikit-learn
+
+7. **Pandas, NumPy, SciPy**
+   - License: BSD 3-Clause
+   - https://pandas.pydata.org/
+   - https://numpy.org/
+   - https://scipy.org/
+
+8. **Docker**
+   - License: Apache License 2.0 (Docker Community Edition)
+   - https://www.docker.com/
+
+---
+
+DATA SOURCES & ATTRIBUTIONS
+
+AgriPulse integrates freely available satellite and meteorological data:
+
+1. **NASA POWER (Meteorology & Solar Radiation)**
+   - Provider: NASA Langley Research Center
+   - Citation: Stackhouse Jr., P.W., et al. (2018)
+   - License: Public domain (no attribution required)
+   - https://power.larc.nasa.gov/
+
+2. **Sentinel-2 Satellite Imagery**
+   - Provider: European Space Agency (ESA) / Copernicus Programme
+   - License: CC BY 4.0 (Creative Commons Attribution 4.0)
+   - https://scihub.copernicus.eu/
+
+3. **SMAP Soil Moisture**
+   - Provider: NASA SMAP Mission
+   - License: Public domain
+   - https://smap.jpl.nasa.gov/
+
+4. **NOAA Vegetation Health Index (VHI)**
+   - Provider: NOAA Climate Prediction Center
+   - License: Public domain
+   - https://www.cpc.ncep.noaa.gov/
+
+5. **eNAM Mandi Price Data**
+   - Provider: Government of India / Small Farmers Agribusiness Consortium (SFAC)
+   - License: Government of India data (public use with attribution)
+   - https://enam.gov.in/
+
+6. **CAI - Crop Acreage & Intensity Database**
+   - Provider: Indian Agricultural Statistics Division
+   - License: Government of India (public use)
+   - https://agricultural-statistics.dacnet.nic.in/
+
+7. **Open-Meteo Weather API**
+   - Provider: Open-Meteo (Switzerland)
+   - License: CC BY 4.0
+   - https://open-meteo.com/
+
+---
+
+ACKNOWLEDGMENTS
+
+AgriPulse Intelligence was developed with support from:
+
+- **Data Sources**: NASA, ESA, NOAA, Government of India agricultural agencies
+- **Open Source Community**: Contributors to FastAPI, Next.js, PostgreSQL, and scientific Python ecosystem
+- **Agriculture Researchers**: CAI and crop science communities
+- **Pilot Users**: AgriPulse partners and farming communities in Vidarbha, Maharashtra
+
+---
+
+DISCLAIMER
+
+While AgriPulse Intelligence is built on well-validated satellite data sources,
+crop forecasting involves inherent uncertainties. Predictions should be used
+for planning and decision-support, not as definitive guidance.
+
+Users are encouraged to:
+- Combine AgriPulse forecasts with local expertise and agronomic knowledge
+- Validate predictions against on-ground observations
+- Adapt recommendations based on specific field conditions
+
+AgriPulse and its contributors are not liable for decisions made based on
+forecasts or recommendations produced by this software.
+
+---
+
+LICENSE SUMMARY
+
+This project uses a combination of MIT, Apache 2.0, and BSD 3-Clause licensed
+software. The aggregate licensing is compatible with commercial use, modification,
+and distribution, subject to retention of copyright notices.
+
+For detailed license information on each dependency, see:
+- backend/requirements.txt
+- frontend/package.json
+
+Questions about licensing? Contact: legal@agripulse.ai

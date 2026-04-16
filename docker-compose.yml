@@ -1,0 +1,144 @@
+version: '3.9'
+
+services:
+  # PostgreSQL 15 Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: agripulse-postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-agripulse}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-agripulse_dev}
+      POSTGRES_DB: ${POSTGRES_DB:-agripulse}
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init_db.sql:/docker-entrypoint-initdb.d/01_init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-agripulse}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - agripulse_network
+    command:
+      - "postgres"
+      - "-c"
+      - "shared_preload_libraries=timescaledb"
+
+  # FastAPI Backend Service
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: agripulse-backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      # Database
+      DATABASE_URL: postgresql://${POSTGRES_USER:-agripulse}:${POSTGRES_PASSWORD:-agripulse_dev}@postgres:5432/${POSTGRES_DB:-agripulse}
+
+      # Application
+      SECRET_KEY: ${SECRET_KEY:-change-me-in-production-to-random-32-char-string}
+      ENVIRONMENT: ${ENVIRONMENT:-development}
+      DEBUG: ${DEBUG:-false}
+
+      # External APIs - NASA POWER
+      NASA_POWER_BASE_URL: https://power.larc.nasa.gov
+      NASA_POWER_API_VERSION: v2
+      NASA_POWER_TIMEOUT: 30
+
+      # External APIs - Open-Meteo (no API key required)
+      OPEN_METEO_BASE_URL: https://api.open-meteo.com
+
+      # External APIs - eNAM Mandi Prices
+      ENAM_BASE_URL: ${ENAM_BASE_URL:-https://api.enam.gov.in}
+      ENAM_API_KEY: ${ENAM_API_KEY:-}
+
+      # External APIs - NOAA
+      NOAA_BASE_URL: https://api.weather.gov
+
+      # Data Parameters
+      SATELLITE_UPDATE_INTERVAL_HOURS: 6
+      WEATHER_UPDATE_INTERVAL_HOURS: 3
+      MANDI_UPDATE_INTERVAL_HOURS: 24
+
+      # Cors
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000,http://127.0.0.1:3000}
+
+      # Logging
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+      - /app/__pycache__
+    networks:
+      - agripulse_network
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Next.js Frontend Service
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - NEXT_PUBLIC_API_BASE_URL=${NEXT_PUBLIC_API_BASE_URL:-http://localhost:8000}
+    container_name: agripulse-frontend
+    depends_on:
+      - backend
+    environment:
+      # Frontend will be accessible on port 3000
+      # Backend API is at http://backend:8000 internally
+      NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-http://localhost:8000}
+      NODE_ENV: ${NODE_ENV:-development}
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+    networks:
+      - agripulse_network
+    command: npm run dev
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Redis Cache (optional - for caching and sessions)
+  redis:
+    image: redis:7-alpine
+    container_name: agripulse-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - agripulse_network
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  agripulse_network:
+    driver: bridge

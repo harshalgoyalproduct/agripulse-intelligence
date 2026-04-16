@@ -1,0 +1,117 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+:root {
+  --color-primary: #1b5e20;
+  --color-primary-dark: #0a3d12;
+  --color-accent: #ff8f00;
+  --color-background: #f3f5f7;
+  --color-card-bg: #ffffff;
+  --color-success: #059669;
+  --color-danger: #dc2626;
+  --color-warning: #f59e0b;
+  --color-text-primary: #1f2937;
+  --color-text-secondary: #6b7280;
+  --color-border: #e5e7eb;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
+  font-family: var(--font-inter, system-ui, -apple-system, sans-serif);
+}
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: var(--color-primary-dark);
+}
+
+/* Leaflet map styles */
+.leaflet-container {
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.leaflet-popup-content-wrapper {
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Recharts customization */
+.recharts-text {
+  fill: var(--color-text-secondary);
+}
+
+.recharts-cartesian-axis-tick-value {
+  font-size: 12px;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-text-secondary);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-primary);
+}
+
+/* Utility classes */
+@layer components {
+  .card {
+    @apply bg-white rounded-lg shadow-card p-6 transition-shadow hover:shadow-card-hover;
+  }
+
+  .btn-primary {
+    @apply bg-agri-primary text-white px-4 py-2 rounded-lg font-medium hover:bg-agri-dark transition-colors;
+  }
+
+  .btn-secondary {
+    @apply bg-gray-200 text-gray-800 px-4 py-2 rounded-lg font-medium hover:bg-gray-300 transition-colors;
+  }
+
+  .badge {
+    @apply inline-block px-3 py-1 rounded-full text-sm font-medium;
+  }
+
+  .badge-success {
+    @apply bg-green-100 text-green-800;
+  }
+
+  .badge-danger {
+    @apply bg-red-100 text-red-800;
+  }
+
+  .badge-warning {
+    @apply bg-yellow-100 text-yellow-800;
+  }
+
+  .badge-accent {
+    @apply bg-amber-100 text-amber-900;
+  }
+}

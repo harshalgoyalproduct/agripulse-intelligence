@@ -1,0 +1,167 @@
+name: Deploy - Production
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  # Deployment to Railway (or other platform)
+  deploy:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: ${{ steps.deployment.outputs.url }}
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy Backend to Railway
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+          RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
+          RAILWAY_SERVICE_ID: ${{ secrets.RAILWAY_SERVICE_ID_BACKEND }}
+        run: |
+          npm install -g @railway/cli
+          railway --version
+          railway link --projectId ${{ secrets.RAILWAY_PROJECT_ID }}
+          railway up --service backend
+        continue-on-error: true
+
+      - name: Deploy Frontend to Vercel
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+        run: |
+          npm install -g vercel
+          vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+          vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+          vercel deploy --prod --token=${{ secrets.VERCEL_TOKEN }}
+        working-directory: frontend
+        continue-on-error: true
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws-region: ap-south-1
+        if: always()
+
+      - name: Deploy to AWS ECS (fallback)
+        env:
+          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+          AWS_ECR_REGISTRY: ${{ secrets.AWS_ECR_REGISTRY }}
+          AWS_ECS_CLUSTER: ${{ secrets.AWS_ECS_CLUSTER }}
+          AWS_ECS_SERVICE_BACKEND: ${{ secrets.AWS_ECS_SERVICE_BACKEND }}
+          AWS_ECS_TASK_DEFINITION: ${{ secrets.AWS_ECS_TASK_DEFINITION }}
+        run: |
+          aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin $AWS_ECR_REGISTRY
+          docker build -t $AWS_ECR_REGISTRY/agripulse-backend:latest ./backend
+          docker push $AWS_ECR_REGISTRY/agripulse-backend:latest
+          aws ecs update-service --cluster $AWS_ECS_CLUSTER --service $AWS_ECS_SERVICE_BACKEND --force-new-deployment
+        if: failure()
+
+  # Health check after deployment
+  health-check:
+    name: Post-Deployment Health Check
+    runs-on: ubuntu-latest
+    needs: deploy
+    if: always()
+    steps:
+      - name: Check backend health
+        run: |
+          for i in {1..30}; do
+            if curl -f https://api.agripulse.io/health; then
+              echo "Backend is healthy"
+              exit 0
+            fi
+            echo "Attempt $i failed, retrying..."
+            sleep 10
+          done
+          exit 1
+        continue-on-error: true
+
+      - name: Check frontend health
+        run: |
+          for i in {1..30}; do
+            if curl -f https://agripulse.io; then
+              echo "Frontend is healthy"
+              exit 0
+            fi
+            echo "Attempt $i failed, retrying..."
+            sleep 10
+          done
+          exit 1
+        continue-on-error: true
+
+      - name: Smoke tests
+        run: |
+          # Test critical API endpoints
+          curl -f https://api.agripulse.io/api/v1/health || exit 1
+          echo "Smoke tests passed"
+        continue-on-error: true
+
+      - name: Notify on failure
+        if: failure()
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '⚠️ Deployment health check failed. Please review logs.'
+            })
+
+  # Rollback on critical failures
+  rollback:
+    name: Rollback on Failure
+    runs-on: ubuntu-latest
+    needs: health-check
+    if: failure()
+    steps:
+      - name: Notify deployment failure
+        run: |
+          echo "Deployment failed - initiating rollback procedure"
+          echo "Check GitHub Actions logs for details"
+        continue-on-error: true
+
+      - name: Rollback Railway (if applicable)
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+        run: |
+          echo "Rolling back Railway deployment..."
+          # Rollback command would go here
+        continue-on-error: true
+
+      - name: Create incident issue
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: 'Deployment Failure - Manual Review Required',
+              body: `Deployment to production failed on commit ${context.sha}.\n\nPlease review the GitHub Actions logs and investigate the issue.\n\nRollback may be required.`,
+              labels: ['deployment', 'critical']
+            })

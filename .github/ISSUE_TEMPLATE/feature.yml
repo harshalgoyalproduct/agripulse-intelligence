@@ -1,0 +1,106 @@
+name: Feature Request
+description: Request a new feature or enhancement for AgriPulse Intelligence
+title: "[FEATURE] "
+labels: ["feature", "triage"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for requesting a feature for AgriPulse Intelligence! Please provide as much detail as possible to help us understand your needs.
+
+  - type: dropdown
+    id: persona
+    attributes:
+      label: Target Persona
+      description: Which type of user will benefit most from this feature?
+      options:
+        - Agri-Input Sales Rep
+        - District Agricultural Officer
+        - Cotton Trader/Ginner
+        - Smallholder Farmer
+        - Internal Team / Ops
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem_statement
+    attributes:
+      label: Problem Statement
+      description: Describe the problem or gap this feature addresses
+      placeholder: |
+        Example: Sales reps struggle to identify which districts have declining soil health,
+        leading to wasted inventory in low-potential regions.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed_solution
+    attributes:
+      label: Proposed Solution
+      description: Describe the solution or feature you have in mind
+      placeholder: |
+        Example: Add a dashboard view showing soil health scores by district with red/yellow/green
+        indicators, updated daily from SMAP soil moisture data.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: data_source
+    attributes:
+      label: Required Data Source(s)
+      description: Select any external data sources needed for this feature
+      multiple: true
+      options:
+        - NASA POWER (weather + vegetation)
+        - Sentinel-2 (NDVI imagery)
+        - SMAP (soil moisture)
+        - NOAA VHI (drought indicators)
+        - eNAM (mandi prices)
+        - CAI (yield data)
+        - Open-Meteo (weather)
+        - Not applicable
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How critical is this feature?
+      options:
+        - Critical (blocking MVP)
+        - High (needed for pilot)
+        - Medium (next phase)
+        - Low (nice to have)
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: Acceptance Criteria
+      description: Define specific, measurable criteria for considering this complete
+      placeholder: |
+        - [ ] Dashboard loads in < 2 seconds
+        - [ ] Data updates every 6 hours
+        - [ ] Works on mobile (375px width)
+        - [ ] Accessible to all personas (WCAG AA)
+
+  - type: textarea
+    id: additional_context
+    attributes:
+      label: Additional Context
+      description: Any additional information that might be relevant
+      placeholder: Add screenshots, data examples, or references to competitive products
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Verification
+      options:
+        - label: I have searched existing issues to avoid duplicates
+          required: true
+        - label: This feature aligns with AgriPulse's vision of B2B demand prediction
+          required: true
+        - label: I have considered impact on existing features
+          required: false

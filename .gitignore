@@ -1,0 +1,189 @@
+# Environment Variables
+.env
+.env.local
+.env.*.local
+*.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environments
+venv/
+ENV/
+env/
+.venv
+env.bak/
+venv.bak/
+
+# Node.js
+node_modules/
+npm-debug.log
+yarn-error.log
+yarn-debug.log*
+*.log
+.npm
+.eslintcache
+.node_repl_history
+lerna-debug.log*
+
+# Next.js
+.next
+out/
+.vercel
+*.tsbuildinfo
+
+# TypeScript
+*.tsc
+dist/
+tsconfig.tsbuildinfo
+
+# IDE & Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+.AppleDouble
+.LSOverride
+*.iml
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+.sublime-project
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+postgres_data/
+redis_data/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.bak
+*.backup
+
+# API Keys & Secrets
+.env.production
+secrets.json
+credentials.json
+private.key
+*.pem
+*.key
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.hypothesis/
+.pytest_cache
+pytest.ini
+coverage.xml
+.nyc_output
+coverage/
+
+# Build outputs
+dist/
+build/
+*.tar.gz
+*.zip
+
+# Docker
+docker-compose.override.yml
+.dockerignore
+
+# ML Models
+models/*.pkl
+models/*.h5
+models/*.joblib
+*.pth
+*.pt
+
+# Data
+data/raw/
+data/processed/
+*.csv
+*.xlsx
+!data/seeds/  # Keep seed data in version control
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+*.ipynb
+
+# Cache
+.cache/
+.pylintrc
+
+# Python type hints
+.dmypy.json
+dmypy.json
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Misc
+.sass-cache/
+.jekyll-metadata
+.env.*.swp
+.tool-versions
+.python-version
+
+# CI/CD
+.github/workflows/*.log
+
+# Generated files
+.versionrc
+CHANGELOG.md
+
+# Local development
+local_config.ini
