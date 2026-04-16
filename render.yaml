@@ -22,7 +22,7 @@ services:
       - key: DATABASE_URL
         fromDatabase:
           name: agripulse-db
-          property: connectionURI
+          property: connectionString
       - key: SECRET_KEY
         generateValue: true
       - key: ENVIRONMENT
