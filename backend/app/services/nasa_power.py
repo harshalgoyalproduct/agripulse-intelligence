@@ -225,7 +225,7 @@ class NASAPowerService:
         """Fetch weather data for all Vidarbha districts."""
         results = {}
 
-        for district in VIDARBHA_DISTRICTS.keys():
+        for district in _VIDARBHA_DISTRICTS_RAW.keys():
             readings = await self.fetch_weather(db, district, start_date, end_date)
             results[district] = readings
 

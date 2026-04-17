@@ -5,7 +5,7 @@ from typing import List, Dict, Optional, Any
 from sqlalchemy.ext.asyncio import AsyncSession
 from ..schemas.weather import ForecastResponse
 from ..core.config import settings
-from .nasa_power import VIDARBHA_DISTRICTS
+from .nasa_power import VIDARBHA_DISTRICTS, _VIDARBHA_DISTRICTS_RAW
 
 logger = logging.getLogger(__name__)
 
@@ -49,17 +49,11 @@ class OpenMeteoService:
 
         lat, lon = VIDARBHA_DISTRICTS[district]
 
-        # Open-Meteo parameters for daily forecast
+        # Open-Meteo parameters for daily forecast (comma-separated, not list)
         params = {
             "latitude": lat,
             "longitude": lon,
-            "daily": [
-                "temperature_2m_max",
-                "temperature_2m_min",
-                "precipitation_sum",
-                "precipitation_probability_max",
-                "wind_speed_10m_max",
-            ],
+            "daily": "temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,wind_speed_10m_max",
             "timezone": "Asia/Kolkata",
             "forecast_days": min(days, 16),
         }
@@ -142,7 +136,7 @@ class OpenMeteoService:
         """Fetch weather forecast for all Vidarbha districts."""
         results = {}
 
-        for district in VIDARBHA_DISTRICTS.keys():
+        for district in _VIDARBHA_DISTRICTS_RAW.keys():
             forecasts = await self.fetch_forecast(district, days)
             results[district] = forecasts
 
