@@ -41,8 +41,10 @@ services:
     plan: free
     rootDir: frontend
     buildCommand: npm install && npm run build
-    startCommand: npm start
+    startCommand: npm start -- -p $PORT
     healthCheckPath: /
     envVars:
+      - key: PORT
+        value: 10000
       - key: NEXT_PUBLIC_API_BASE_URL
         value: https://agripulse-api.onrender.com
