@@ -28,9 +28,9 @@ services:
       - key: ENVIRONMENT
         value: production
       - key: NASA_POWER_BASE_URL
-        value: https://power.larc.nasa.gov
+        value: https://power.larc.nasa.gov/api/temporal/daily/point
       - key: OPEN_METEO_BASE_URL
-        value: https://api.open-meteo.com
+        value: https://api.open-meteo.com/v1
       - key: CORS_ORIGINS
         value: https://agripulse-web.onrender.com
 

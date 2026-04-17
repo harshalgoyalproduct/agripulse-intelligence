@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, func, extract
 from datetime import date, datetime, timedelta
 from typing import List, Optional
 
@@ -14,6 +14,9 @@ from ...schemas.weather import (
 )
 from ...services.nasa_power import NASAPowerService
 from ...services.open_meteo import OpenMeteoService
+import logging
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/weather", tags=["weather"])
 
@@ -53,18 +56,18 @@ async def get_daily_weather(
     )
 
     # Get total count
-    count_stmt = select(WeatherReading).where(
+    count_stmt = select(func.count()).select_from(WeatherReading).where(
         WeatherReading.district == district,
         WeatherReading.date >= start_date,
         WeatherReading.date <= end_date,
     )
-    total = len(await db.scalars(count_stmt))
+    total = await db.scalar(count_stmt) or 0
 
     # Apply pagination
     stmt = stmt.offset(skip).limit(limit)
     readings = await db.scalars(stmt)
 
-    items = [WeatherReadingResponse.from_orm(r) for r in readings]
+    items = [WeatherReadingResponse.model_validate(r) for r in readings]
 
     return WeatherReadingListResponse(
         items=items,
@@ -85,13 +88,17 @@ async def get_weather_forecast(
     - **district**: District name (e.g., 'Yavatmal', 'Nagpur')
     - **days**: Number of forecast days (1-16, default 16)
     """
-    async with OpenMeteoService() as service:
-        forecasts = await service.fetch_forecast(district, days=days)
+    try:
+        async with OpenMeteoService() as service:
+            forecasts = await service.fetch_forecast(district, days=days)
+    except Exception as e:
+        logger.error(f"Forecast fetch error for {district}: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Forecast service error: {str(e)}")
 
     if not forecasts:
         raise HTTPException(
             status_code=503,
-            detail=f"Unable to fetch forecast data for {district}",
+            detail=f"Unable to fetch forecast data for {district}. Check district name.",
         )
 
     return forecasts
@@ -113,7 +120,7 @@ async def get_climate_data(
         # Query historical data for this month across all years
         stmt = select(WeatherReading).where(
             WeatherReading.district == district,
-            WeatherReading.date.op("extract")("month") == month,
+            extract('month', WeatherReading.date) == month,
         )
         readings = await db.scalars(stmt)
         readings_list = list(readings)

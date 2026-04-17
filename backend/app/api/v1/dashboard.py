@@ -143,7 +143,7 @@ async def get_dashboard_summary(
     )
     latest_weather = await db.scalar(weather_stmt)
     weather_response = (
-        WeatherReadingResponse.from_orm(latest_weather) if latest_weather else None
+        WeatherReadingResponse.model_validate(latest_weather) if latest_weather else None
     )
 
     # Get latest satellite
@@ -155,7 +155,7 @@ async def get_dashboard_summary(
     )
     latest_satellite = await db.scalar(satellite_stmt)
     satellite_response = (
-        SatelliteReadingResponse.from_orm(latest_satellite) if latest_satellite else None
+        SatelliteReadingResponse.model_validate(latest_satellite) if latest_satellite else None
     )
 
     # Get today's market prices (latest from each commodity/mandi)
@@ -168,7 +168,7 @@ async def get_dashboard_summary(
         .order_by(MandiPrice.commodity)
     )
     market_prices = await db.scalars(market_stmt)
-    market_response = [MandiPriceResponse.from_orm(m) for m in market_prices]
+    market_response = [MandiPriceResponse.model_validate(m) for m in market_prices]
 
     # Get active alerts
     alert_stmt = (

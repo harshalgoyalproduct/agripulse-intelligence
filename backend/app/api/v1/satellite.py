@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, func
 from datetime import date, timedelta
 from typing import List, Optional
 
@@ -52,18 +52,18 @@ async def get_satellite_readings(
     )
 
     # Get total count
-    count_stmt = select(SatelliteReading).where(
+    count_stmt = select(func.count()).select_from(SatelliteReading).where(
         SatelliteReading.district == district,
         SatelliteReading.date >= start_date,
         SatelliteReading.date <= end_date,
     )
-    total = len(await db.scalars(count_stmt))
+    total = await db.scalar(count_stmt) or 0
 
     # Apply pagination
     stmt = stmt.offset(skip).limit(limit)
     readings = await db.scalars(stmt)
 
-    items = [SatelliteReadingResponse.from_orm(r) for r in readings]
+    items = [SatelliteReadingResponse.model_validate(r) for r in readings]
 
     return SatelliteReadingListResponse(
         items=items,
