@@ -1,9 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, CircleMarker, Popup } from 'react-leaflet';
-import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
 
 interface District {
   name: string;
@@ -22,10 +19,10 @@ const VIDARBHA_DISTRICTS: District[] = [
 
 const getColorForNDVI = (ndvi: number | undefined): string => {
   if (!ndvi) return '#ccc';
-  if (ndvi >= 0.7) return '#059669'; // Green
-  if (ndvi >= 0.6) return '#84cc16'; // Lime
-  if (ndvi >= 0.5) return '#eab308'; // Yellow
-  return '#ef4444'; // Red
+  if (ndvi >= 0.7) return '#059669';
+  if (ndvi >= 0.6) return '#84cc16';
+  if (ndvi >= 0.5) return '#eab308';
+  return '#ef4444';
 };
 
 const getHealthStatus = (ndvi: number | undefined): string => {
@@ -36,88 +33,88 @@ const getHealthStatus = (ndvi: number | undefined): string => {
   return 'Poor';
 };
 
-export function NDVIMap() {
-  const [districts, setDistricts] = useState<District[]>(VIDARBHA_DISTRICTS);
-  const [mounted, setMounted] = useState(false);
+function LeafletMap({ districts }: { districts: District[] }) {
+  const [MapComponents, setMapComponents] = useState<any>(null);
 
   useEffect(() => {
-    setMounted(true);
+    // Dynamic import to avoid SSR window issues
+    Promise.all([
+      import('react-leaflet'),
+      import('leaflet/dist/leaflet.css'),
+    ]).then(([rl]) => {
+      setMapComponents(rl);
+    });
   }, []);
 
-  if (!mounted) {
+  if (!MapComponents) {
     return (
-      <div className="card h-96 flex items-center justify-center">
+      <div className="h-96 flex items-center justify-center bg-gray-50 rounded-lg">
         <div className="text-gray-500">Loading map...</div>
       </div>
     );
   }
 
+  const { MapContainer, TileLayer, CircleMarker, Popup } = MapComponents;
+
+  return (
+    <MapContainer
+      center={[21.0, 78.5]}
+      zoom={8}
+      style={{ height: '100%', width: '100%' }}
+    >
+      <TileLayer
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      />
+      {districts.map((district: District) => (
+        <CircleMarker
+          key={district.name}
+          center={[district.lat, district.lng]}
+          radius={20}
+          fillColor={getColorForNDVI(district.ndvi)}
+          color={getColorForNDVI(district.ndvi)}
+          weight={2}
+          opacity={0.8}
+          fillOpacity={0.7}
+        >
+          <Popup>
+            <div className="text-sm">
+              <p className="font-bold">{district.name}</p>
+              <p>NDVI: {district.ndvi?.toFixed(2)}</p>
+              <p>Health: {getHealthStatus(district.ndvi)}</p>
+            </div>
+          </Popup>
+        </CircleMarker>
+      ))}
+    </MapContainer>
+  );
+}
+
+export function NDVIMap() {
   return (
     <div className="card">
       <h3 className="text-lg font-semibold text-gray-900 mb-4">
         NDVI & Crop Health Map
       </h3>
       <div className="relative h-96 rounded-lg overflow-hidden border border-gray-200">
-        <MapContainer
-          center={[21.0, 78.5]}
-          zoom={8}
-          style={{ height: '100%', width: '100%' }}
-        >
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
-          {districts.map((district) => (
-            <CircleMarker
-              key={district.name}
-              center={[district.lat, district.lng]}
-              radius={20}
-              fillColor={getColorForNDVI(district.ndvi)}
-              color={getColorForNDVI(district.ndvi)}
-              weight={2}
-              opacity={0.8}
-              fillOpacity={0.7}
-            >
-              <Popup>
-                <div className="text-sm">
-                  <p className="font-bold">{district.name}</p>
-                  <p>NDVI: {district.ndvi?.toFixed(2)}</p>
-                  <p>Health: {getHealthStatus(district.ndvi)}</p>
-                </div>
-              </Popup>
-            </CircleMarker>
-          ))}
-        </MapContainer>
+        <LeafletMap districts={VIDARBHA_DISTRICTS} />
       </div>
 
-      {/* Legend */}
       <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-2">
         <div className="flex items-center gap-2">
-          <div
-            className="w-4 h-4 rounded-full"
-            style={{ backgroundColor: '#059669' }}
-          />
+          <div className="w-4 h-4 rounded-full" style={{ backgroundColor: '#059669' }} />
           <span className="text-xs text-gray-700">Excellent (0.7+)</span>
         </div>
         <div className="flex items-center gap-2">
-          <div
-            className="w-4 h-4 rounded-full"
-            style={{ backgroundColor: '#84cc16' }}
-          />
+          <div className="w-4 h-4 rounded-full" style={{ backgroundColor: '#84cc16' }} />
           <span className="text-xs text-gray-700">Good (0.6-0.7)</span>
         </div>
         <div className="flex items-center gap-2">
-          <div
-            className="w-4 h-4 rounded-full"
-            style={{ backgroundColor: '#eab308' }}
-          />
+          <div className="w-4 h-4 rounded-full" style={{ backgroundColor: '#eab308' }} />
           <span className="text-xs text-gray-700">Fair (0.5-0.6)</span>
         </div>
         <div className="flex items-center gap-2">
-          <div
-            className="w-4 h-4 rounded-full"
-            style={{ backgroundColor: '#ef4444' }}
-          />
+          <div className="w-4 h-4 rounded-full" style={{ backgroundColor: '#ef4444' }} />
           <span className="text-xs text-gray-700">Poor (0-0.5)</span>
         </div>
       </div>
