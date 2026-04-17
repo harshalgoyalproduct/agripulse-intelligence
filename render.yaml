@@ -40,8 +40,8 @@ services:
     runtime: node
     plan: free
     rootDir: frontend
-    buildCommand: npm install && npm run build
-    startCommand: npx next start -H 0.0.0.0 -p $PORT
+    buildCommand: npm install && npm run build && cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/
+    startCommand: node .next/standalone/server.js
     healthCheckPath: /
     envVars:
       - key: PORT

@@ -1,6 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
+import logging
+
+logger = logging.getLogger(__name__)
 from datetime import date, timedelta
 from typing import List, Optional
 
@@ -53,7 +56,7 @@ async def get_mandi_prices(
         stmt = stmt.where(MandiPrice.commodity == commodity)
 
     # Get total count
-    count_stmt = select(MandiPrice).where(
+    count_stmt = select(func.count()).select_from(MandiPrice).where(
         MandiPrice.district == district,
         MandiPrice.date >= start_date,
         MandiPrice.date <= end_date,
@@ -61,13 +64,13 @@ async def get_mandi_prices(
     if commodity:
         count_stmt = count_stmt.where(MandiPrice.commodity == commodity)
 
-    total = len(await db.scalars(count_stmt))
+    total = await db.scalar(count_stmt) or 0
 
     # Apply pagination and ordering
     stmt = stmt.order_by(MandiPrice.date.desc()).offset(skip).limit(limit)
     prices = await db.scalars(stmt)
 
-    items = [MandiPriceResponse.from_orm(p) for p in prices]
+    items = [MandiPriceResponse.model_validate(p) for p in prices]
 
     return MandiPriceListResponse(
         items=items,
