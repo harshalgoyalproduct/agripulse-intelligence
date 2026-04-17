@@ -1,9 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { useMandiPrices } from '@/hooks/useDashboard';
-import { MandiTable } from '@/components/MandiTable';
-import { StatCard } from '@/components/StatCard';
+import { useMandiPrices } from '../../hooks/useDashboard';
+import { MandiTable } from '../../components/MandiTable';
+import { StatCard } from '../../components/StatCard';
 import { TrendingUp, BarChart3, Activity } from 'lucide-react';
 
 const DISTRICTS = ['All Districts', 'Yavatmal', 'Nagpur', 'Amravati', 'Wardha'];

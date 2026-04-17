@@ -10,7 +10,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
-import { WeatherData } from '@/lib/api';
+import { WeatherData } from '../lib/api';
 
 interface WeatherChartProps {
   data: WeatherData[];

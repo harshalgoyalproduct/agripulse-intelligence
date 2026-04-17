@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { MandiPrice } from '@/lib/api';
+import { MandiPrice } from '../lib/api';
 import { ArrowUp, ArrowDown } from 'lucide-react';
 
 interface MandiTableProps {

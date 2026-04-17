@@ -1,6 +1,6 @@
 'use client';
 
-import { Alert } from '@/lib/api';
+import { Alert } from '../lib/api';
 import { AlertCircle, AlertTriangle, Info, X } from 'lucide-react';
 import { useState } from 'react';
 

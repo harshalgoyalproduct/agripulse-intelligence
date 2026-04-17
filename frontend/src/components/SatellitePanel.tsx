@@ -1,6 +1,6 @@
 'use client';
 
-import { SatelliteData } from '@/lib/api';
+import { SatelliteData } from '../lib/api';
 import { Cloud, Wind, Droplets, Sun } from 'lucide-react';
 import {
   LineChart,

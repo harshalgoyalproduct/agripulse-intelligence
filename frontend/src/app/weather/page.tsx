@@ -1,9 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { useWeather } from '@/hooks/useWeather';
-import { WeatherChart } from '@/components/WeatherChart';
-import { StatCard } from '@/components/StatCard';
+import { useWeather } from '../../hooks/useWeather';
+import { WeatherChart } from '../../components/WeatherChart';
+import { StatCard } from '../../components/StatCard';
 import { Cloud, Droplet, Wind, Eye } from 'lucide-react';
 
 const DISTRICTS = ['Yavatmal', 'Nagpur', 'Amravati', 'Wardha'];

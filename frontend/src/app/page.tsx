@@ -1,11 +1,11 @@
 'use client';
 
-import { useDashboard, useAlerts, useMandiPrices } from '@/hooks/useDashboard';
-import { useWeatherSummary } from '@/hooks/useWeather';
-import { StatCard } from '@/components/StatCard';
-import { AlertBanner } from '@/components/AlertBanner';
-import { WeatherChart } from '@/components/WeatherChart';
-import { MandiTable } from '@/components/MandiTable';
+import { useDashboard, useAlerts, useMandiPrices } from '../hooks/useDashboard';
+import { useWeatherSummary } from '../hooks/useWeather';
+import { StatCard } from '../components/StatCard';
+import { AlertBanner } from '../components/AlertBanner';
+import { WeatherChart } from '../components/WeatherChart';
+import { MandiTable } from '../components/MandiTable';
 import {
   Cloud,
   TrendingUp,

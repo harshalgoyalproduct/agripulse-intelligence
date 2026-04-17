@@ -1,7 +1,7 @@
 'use client';
 
-import { useAlerts } from '@/hooks/useDashboard';
-import { AlertBanner } from '@/components/AlertBanner';
+import { useAlerts } from '../../hooks/useDashboard';
+import { AlertBanner } from '../../components/AlertBanner';
 import { AlertCircle, AlertTriangle, Info } from 'lucide-react';
 
 export default function AlertsPage() {

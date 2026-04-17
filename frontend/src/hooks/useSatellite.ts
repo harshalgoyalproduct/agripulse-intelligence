@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { apiClient, SatelliteData } from '@/lib/api';
+import { apiClient, SatelliteData } from '../lib/api';
 
 export function useSatellite(district: string) {
   return useQuery<SatelliteData[]>({

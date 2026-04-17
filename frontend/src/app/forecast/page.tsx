@@ -1,7 +1,7 @@
 'use client';
 
-import { useDashboard } from '@/hooks/useDashboard';
-import { StatCard } from '@/components/StatCard';
+import { useDashboard } from '../../hooks/useDashboard';
+import { StatCard } from '../../components/StatCard';
 import { TrendingUp, Calendar, Target, Zap } from 'lucide-react';
 import {
   BarChart,

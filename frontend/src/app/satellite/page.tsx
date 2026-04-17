@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { useSatellite } from '@/hooks/useSatellite';
-import { SatellitePanel } from '@/components/SatellitePanel';
+import { useSatellite } from '../../hooks/useSatellite';
+import { SatellitePanel } from '../../components/SatellitePanel';
 
 const DISTRICTS = ['Yavatmal', 'Nagpur', 'Amravati', 'Wardha'];
 

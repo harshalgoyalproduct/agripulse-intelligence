@@ -1,6 +1,6 @@
 'use client';
 
-import { NDVIMap } from '@/components/NDVIMap';
+import { NDVIMap } from '../../components/NDVIMap';
 
 export default function MapPage() {
   return (

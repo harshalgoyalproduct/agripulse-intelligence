@@ -1,6 +1,6 @@
 'use client';
 
-import { StatCard } from '@/components/StatCard';
+import { StatCard } from '../../components/StatCard';
 import { TrendingUp, Target, Zap, AlertCircle } from 'lucide-react';
 import {
   BarChart,
