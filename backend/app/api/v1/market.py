@@ -7,6 +7,7 @@ from typing import List, Optional
 from ...core.database import get_db
 from ...models.market import MandiPrice
 from ...schemas.market import (
+    MandiPriceCreate,
     MandiPriceResponse,
     MandiPriceListResponse,
     PriceHistoryResponse,
@@ -211,7 +212,7 @@ async def get_price_history(
 
 @router.post("/ingest")
 async def ingest_mandi_prices(
-    prices: List[MandiPrice],
+    prices: List[MandiPriceCreate],
     db: AsyncSession = Depends(get_db),
 ):
     """
@@ -220,7 +221,8 @@ async def ingest_mandi_prices(
     Accepts a list of mandi prices and stores them in the database.
     """
     try:
-        for price in prices:
+        for price_data in prices:
+            price = MandiPrice(**price_data.model_dump())
             db.add(price)
         await db.commit()
         return {
