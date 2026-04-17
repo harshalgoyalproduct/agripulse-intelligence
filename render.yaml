@@ -41,7 +41,7 @@ services:
     plan: free
     rootDir: frontend
     buildCommand: npm install && npm run build
-    startCommand: npm start -- -p $PORT
+    startCommand: npx next start -H 0.0.0.0 -p $PORT
     healthCheckPath: /
     envVars:
       - key: PORT
