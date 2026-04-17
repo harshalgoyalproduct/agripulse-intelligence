@@ -37,11 +37,14 @@ function LeafletMap({ districts }: { districts: District[] }) {
   const [MapComponents, setMapComponents] = useState<any>(null);
 
   useEffect(() => {
+    // Load leaflet CSS via link tag (can't dynamic-import CSS)
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+    document.head.appendChild(link);
+
     // Dynamic import to avoid SSR window issues
-    Promise.all([
-      import('react-leaflet'),
-      import('leaflet/dist/leaflet.css'),
-    ]).then(([rl]) => {
+    import('react-leaflet').then((rl) => {
       setMapComponents(rl);
     });
   }, []);
