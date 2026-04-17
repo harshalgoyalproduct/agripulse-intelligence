@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 
 # Vidarbha district coordinates (lat, lon)
-VIDARBHA_DISTRICTS = {
+_VIDARBHA_DISTRICTS_RAW = {
     "Yavatmal": (20.39, 78.13),
     "Nagpur": (21.15, 79.09),
     "Amravati": (20.93, 77.75),
@@ -21,6 +21,10 @@ VIDARBHA_DISTRICTS = {
     "Washim": (20.11, 77.15),
     "Buldhana": (20.53, 76.18),
 }
+
+# Case-insensitive lookup: both "yavatmal" and "Yavatmal" work
+VIDARBHA_DISTRICTS = {k.lower(): v for k, v in _VIDARBHA_DISTRICTS_RAW.items()}
+VIDARBHA_DISTRICTS.update(_VIDARBHA_DISTRICTS_RAW)  # keep originals too
 
 
 class NASAPowerService:
