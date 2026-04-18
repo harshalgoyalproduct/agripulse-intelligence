@@ -40,7 +40,7 @@ services:
     runtime: node
     plan: free
     rootDir: frontend
-    buildCommand: npm install && npm run build && cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/
+    buildCommand: npm install && npm run build && mkdir -p public && cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/
     startCommand: node .next/standalone/server.js
     healthCheckPath: /
     envVars:
